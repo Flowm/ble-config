@@ -12,7 +12,8 @@ class HmBle {
 		void read();
 		void send(const char* cmd, bool echo=true);
 
-		void handleInput();
 		void usage();
+		void handleInput();
+		void configureBeacon();
 	private:
 };

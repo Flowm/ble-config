@@ -12,7 +12,7 @@ void setup() {
 
   delay(1000);
   ble.usage();
-  SerialBle.println();
+  SerialBle.print("AT");
 }
 
 void loop() {
