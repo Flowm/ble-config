@@ -6,74 +6,99 @@ char inChar;
 void setup() {
   SerialCmd.begin(9600);
   SerialBle.begin(9600);
+
+  delay(1000);
+  usage();
+  SerialBle.println();
 }
 
 void loop() {
-  if (SerialBle.available() > 0) {
-    inChar = SerialBle.read();
-    SerialCmd.write(inChar);
-  }
+  readBle();
 
   if (SerialCmd.available() > 0) {
     inChar = SerialCmd.read();
     SerialCmd.println();
     switch (inChar) {
+      case 'i':
+        sendCmd("AT+VERR?");
+        sendCmd("AT+ADDR?");
+        sendCmd("AT+BAUD?");
+        break;
       case '1':
-        SerialBle.print("AT+VERR?");
+        sendCmd("AT+VERR?");
         break;
       case '2':
-        SerialBle.print("AT+RENEW");
+        sendCmd("AT+RENEW");
         break;
       case '3':
-        SerialBle.print("AT+RESET");
+        sendCmd("AT+RESET");
         break;
       case '4':
-        SerialBle.print("AT");
+        sendCmd("AT");
         break;
       case '5':
-        SerialBle.print("AT+MARJ0x0A00");
+        sendCmd("AT+MARJ0x0A00");
         break;
       case '6':
-        SerialBle.print("AT+MINO0x00A0");
+        sendCmd("AT+MINO0x00A0");
         break;
       case '7':
-        SerialBle.print("AT+ADVI5");
+        sendCmd("AT+ADVI5");
         break;
       case '8':
-        SerialBle.print("AT+NAMEFMHOME");
+        sendCmd("AT+NAMEFMHOME");
         break;
       case '9':
-        SerialBle.print("AT+ADTY3");
+        sendCmd("AT+ADTY3");
         break;
       case 'a':
-        SerialBle.print("AT+IBEA1");
+        sendCmd("AT+IBEA1");
         break;
       case 'b':
-        SerialBle.print("AT+DELO2");
+        sendCmd("AT+DELO2");
         break;
       case 'c':
-        SerialBle.print("AT+PWRM0");
+        sendCmd("AT+PWRM0");
         break;
       case 'd':
-        SerialBle.print("AT+RESET");
+        sendCmd("AT+RESET");
         break;
       default:
-        SerialCmd.print(
-            "1 AT+VERR?\n"
-            "2 AT+RENEW\n"
-            "3 AT+RESET\n"
-            "4 AT\n"
-            "5 AT+MARJ0xA001\n"
-            "6 AT+MINO0xB001\n"
-            "7 AT+ADVI5\n"
-            "8 AT+NAMEHMKI\n"
-            "9 AT+ADTY3\n"
-            "a AT+IBEA1\n"
-            "b AT+DELO2\n"
-            "c AT+PWRM0\n"
-            "d AT+RESET\n"
-            );
+        usage();
         break;
     }
+  }
+}
+
+void usage() {
+  SerialCmd.print(
+      "1 AT+VERR?\n"
+      "2 AT+RENEW\n"
+      "3 AT+RESET\n"
+      "4 AT\n"
+      "5 AT+MARJ0xA001\n"
+      "6 AT+MINO0xB001\n"
+      "7 AT+ADVI5\n"
+      "8 AT+NAMEHMKI\n"
+      "9 AT+ADTY3\n"
+      "a AT+IBEA1\n"
+      "b AT+DELO2\n"
+      "c AT+PWRM0\n"
+      "d AT+RESET\n"
+  );
+}
+
+void sendCmd(const char* cmd) {
+  SerialCmd.printf("> %s\n", cmd);
+  SerialBle.print(cmd);
+  delay(100);
+  readBle();
+  SerialCmd.println();
+}
+
+void readBle() {
+  while (SerialBle.available() > 0) {
+    inChar = SerialBle.read();
+    SerialCmd.write(inChar);
   }
 }
