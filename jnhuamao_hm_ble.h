@@ -14,6 +14,12 @@ class HmBle {
 
 		void usage();
 		void handleInput();
+
+		void factoryReset();
 		void configureBeacon();
+		void configureSlave();
+		void configureMaster();
+
+		void console();
 	private:
 };
