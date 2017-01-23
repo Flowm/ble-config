@@ -1,4 +1,4 @@
-#include "jnhuamao_hm_ble.h"
+#include "HmBle.hpp"
 
 void HmBle::read() {
 	while (bleSerial->available() > 0) {

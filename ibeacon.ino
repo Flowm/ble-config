@@ -1,4 +1,4 @@
-#include "jnhuamao_hm_ble.h"
+#include "HmBle.hpp"
 
 #define SerialCmd Serial
 #define SerialBle Serial1
