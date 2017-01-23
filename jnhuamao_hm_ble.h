@@ -1,13 +1,10 @@
 #pragma once
 
-#define SerialCmd Serial
-#define SerialBle Serial1
-
 #include "Wire.h"
 
 class HmBle {
 	public:
-		HmBle() {}
+		HmBle(Stream* cmdSerial, Stream* bleSerial) : cmdSerial(cmdSerial), bleSerial(bleSerial) {}
 
 		void read();
 		void send(const char* cmd, bool echo=true);
@@ -22,4 +19,6 @@ class HmBle {
 
 		void console();
 	private:
+		Stream* cmdSerial;
+		Stream* bleSerial;
 };

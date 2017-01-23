@@ -3,7 +3,7 @@
 #define SerialCmd Serial
 #define SerialBle Serial1
 
-HmBle ble;
+HmBle ble(&SerialCmd, &SerialBle);
 char inChar;
 
 void setup() {

@@ -1,24 +1,24 @@
 #include "jnhuamao_hm_ble.h"
 
 void HmBle::read() {
-	while (SerialBle.available() > 0) {
-		char inChar = SerialBle.read();
-		SerialCmd.write(inChar);
+	while (bleSerial->available() > 0) {
+		char inChar = bleSerial->read();
+		cmdSerial->write(inChar);
 	}
 }
 
 void HmBle::send(const char* cmd, bool echo) {
 	if (echo) {
-		SerialCmd.printf("> %s\r\n", cmd);
+		cmdSerial->printf("> %s\r\n", cmd);
 	}
-	SerialBle.print(cmd);
+	bleSerial->print(cmd);
 	delay(100);
 	read();
-	SerialCmd.println();
+	cmdSerial->println();
 }
 
 void HmBle::usage() {
-	SerialCmd.print(
+	cmdSerial->print(
 			"Commands\r\n"
 			"i - Info\r\n"
 			"r - Reboot\r\n"
@@ -29,11 +29,11 @@ void HmBle::usage() {
 }
 
 void HmBle::handleInput() {
-	if (SerialCmd.available() <= 0) {
+	if (cmdSerial->available() <= 0) {
 		return;
 	}
-	SerialCmd.println();
-	char input = SerialCmd.read();
+	cmdSerial->println();
+	char input = cmdSerial->read();
 	switch (input) {
 		case 'i': // Info
 			send("AT");
@@ -107,16 +107,16 @@ void HmBle::configureMaster() {
 void HmBle::console() {
 	char inChar;
 	while (true) {
-		if (SerialBle.available() > 0) {
-			inChar = SerialBle.read();
+		if (bleSerial->available() > 0) {
+			inChar = bleSerial->read();
 			if (inChar == '\r') {
-				SerialCmd.write('\n');
+				cmdSerial->write('\n');
 			}
-			SerialCmd.write(inChar);
+			cmdSerial->write(inChar);
 		}
-		if (SerialCmd.available() > 0) {
-			inChar = SerialCmd.read();
-			SerialBle.write(inChar);
+		if (cmdSerial->available() > 0) {
+			inChar = cmdSerial->read();
+			bleSerial->write(inChar);
 		}
 	}
 }
