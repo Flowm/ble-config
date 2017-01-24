@@ -7,7 +7,7 @@ class HmBle {
 	public:
 		HmBle(Stream* cmdSerial, Stream* bleSerial) : cmdSerial(cmdSerial), bleSerial(bleSerial), conEmu(cmdSerial) {}
 
-		void read();
+		void readAll();
 		void send(const char* cmd, bool echo=true);
 		void sendf(const char* fmt, ...);
 

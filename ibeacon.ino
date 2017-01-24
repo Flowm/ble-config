@@ -12,10 +12,8 @@ void setup() {
 
   delay(1000);
   ble.usage();
-  SerialBle.print("AT");
 }
 
 void loop() {
-  ble.read();
   ble.handleInput();
 }

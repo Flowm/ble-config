@@ -1,9 +1,11 @@
 #include "HmBle.hpp"
 
-void HmBle::read() {
-	while (bleSerial->available() > 0) {
-		char inChar = bleSerial->read();
-		cmdSerial->write(inChar);
+void HmBle::readAll() {
+	if (bleSerial->available() > 0) {
+		do {
+			cmdSerial->write(bleSerial->read());
+		} while (bleSerial->available() > 0);
+		cmdSerial->println();
 	}
 }
 
@@ -13,8 +15,7 @@ void HmBle::send(const char* cmd, bool echo) {
 	}
 	bleSerial->print(cmd);
 	delay(100);
-	read();
-	cmdSerial->println();
+	readAll();
 }
 
 void HmBle::sendf(const char* fmt, ...) {
@@ -35,7 +36,7 @@ void HmBle::usage() {
 			"beacon         Configure as beacon\r\n"
 			"slave          Configure as peripheral device\r\n"
 			"master [addr]  Configure as central device and connect to addr\r\n"
-			"console        Console\r\n"
+			"console        Serial console\r\n"
 	);
 }
 
@@ -99,8 +100,18 @@ void HmBle::handleInput() {
 			console();
 			break;
 
-		default:
+		case str2int("help"):
+		case str2int("h"):
 			usage();
+			break;
+
+		default:
+			if (strlen(cmd) >= 2 && !strncmp(cmd, "AT", 2)) {
+				// Send AT command
+				send(cmd);
+			} else {
+				usage();
+			}
 			break;
 	}
 }
@@ -144,18 +155,19 @@ void HmBle::configureMaster(char* args) {
 }
 
 void HmBle::console() {
-	char inChar;
+	char key;
+
 	while (true) {
 		if (bleSerial->available() > 0) {
-			inChar = bleSerial->read();
-			if (inChar == '\r') {
+			key = bleSerial->read();
+			if (key == '\r') {
 				cmdSerial->write('\n');
 			}
-			cmdSerial->write(inChar);
+			cmdSerial->write(key);
 		}
 		if (cmdSerial->available() > 0) {
-			inChar = cmdSerial->read();
-			bleSerial->write(inChar);
+			key = cmdSerial->read();
+			bleSerial->write(key);
 		}
 	}
 }
