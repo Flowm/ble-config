@@ -25,6 +25,8 @@ class HmBle {
 		Stream* bleSerial;
 
 		ConEmu conEmu;
+
+		void promt();
 };
 
 // Compile time bernstein hash function

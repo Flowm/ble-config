@@ -14,7 +14,7 @@ void HmBle::send(const char* cmd, bool echo) {
 		cmdSerial->printf("> %s\r\n", cmd);
 	}
 	bleSerial->print(cmd);
-	delay(100);
+	delay(200);
 	readAll();
 }
 
@@ -53,8 +53,9 @@ void HmBle::handleInput() {
 		return;
 	}
 
+	// Tokenize string to get command
 	if (!(cmd = strtok(line, " "))) {
-		// Tokenize string to get command
+		promt();
 		return;
 	}
 
@@ -114,6 +115,9 @@ void HmBle::handleInput() {
 			}
 			break;
 	}
+
+	// Print promt
+	promt();
 }
 
 void HmBle::factoryReset() {
@@ -170,4 +174,8 @@ void HmBle::console() {
 			bleSerial->write(key);
 		}
 	}
+}
+
+void HmBle::promt() {
+	cmdSerial->write("\r\n# ");
 }
