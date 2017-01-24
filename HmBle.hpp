@@ -9,14 +9,15 @@ class HmBle {
 
 		void read();
 		void send(const char* cmd, bool echo=true);
+		void sendf(const char* fmt, ...);
 
 		void usage();
 		void handleInput();
 
 		void factoryReset();
-		void configureBeacon();
+		void configureBeacon(char* args);
 		void configureSlave();
-		void configureMaster();
+		void configureMaster(char* args);
 
 		void console();
 	private:
@@ -25,3 +26,8 @@ class HmBle {
 
 		ConEmu conEmu;
 };
+
+// Compile time bernstein hash function
+constexpr unsigned int str2int(const char* str, int h = 0) {
+	return !str[h] ? 5381 : (str2int(str, h+1)*33) ^ str[h];
+}

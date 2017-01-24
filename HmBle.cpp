@@ -17,49 +17,88 @@ void HmBle::send(const char* cmd, bool echo) {
 	cmdSerial->println();
 }
 
+void HmBle::sendf(const char* fmt, ...) {
+	char buf[32];
+	va_list args;
+	va_start(args, fmt);
+	vsnprintf(buf, sizeof(buf), fmt, args);
+	va_end(args);
+	send(buf);
+}
+
 void HmBle::usage() {
 	cmdSerial->print(
-			"Commands\r\n"
-			"i - Info\r\n"
-			"r - Reboot\r\n"
-			"f - Factory reset\r\n"
-			"b - Configure beacon\r\n"
-			"c - Console\r\n"
+			"Commands:\r\n"
+			"info           Show info\r\n"
+			"reboot         Reboot\r\n"
+			"factory        Perform factory reset\r\n"
+			"beacon         Configure as beacon\r\n"
+			"slave          Configure as peripheral device\r\n"
+			"master [addr]  Configure as central device and connect to addr\r\n"
+			"console        Console\r\n"
 	);
 }
 
 void HmBle::handleInput() {
+	char *line, *cmd, *args;
+
 	if (cmdSerial->available() <= 0) {
+		// No input
 		return;
 	}
-	cmdSerial->println();
-	char input = cmdSerial->read();
-	switch (input) {
-		case 'i': // Info
+
+	if (!(line = conEmu.read_key(cmdSerial->read()))) {
+		// Line not complete (yet)
+		return;
+	}
+
+	if (!(cmd = strtok(line, " "))) {
+		// Tokenize string to get command
+		return;
+	}
+
+	switch (str2int(cmd)) {
+		case str2int("info"):
+		case str2int("i"):
 			send("AT");
 			send("AT+VERR?");
 			send("AT+ADDR?");
 			send("AT+MODE?");
 			send("AT+BAUD?");
 			break;
-		case 'c': // Console
-			console();
-			break;
-		case 'r': // Reboot
+
+		case str2int("reboot"):
+		case str2int("r"):
 			send("AT+RESET");
 			break;
-		case 'f': // Factory reset
+
+		case str2int("factory"):
+		case str2int("f"):
 			factoryReset();
 			break;
-		case 'b': // Configure Beacon
-			configureBeacon();
+
+		case str2int("beacon"):
+		case str2int("b"):
+			if ((args = strtok(NULL, "")))
+				configureBeacon(args);
 			break;
-		case '[': // Configure Slave
+
+		case str2int("slave"):
+		case str2int("s"):
 			configureSlave();
 			break;
-		case ']': // Configure Master
-			configureMaster();
+
+		case str2int("master"):
+		case str2int("m"):
+			if ((args = strtok(NULL, "")))
+				configureMaster(args);
 			break;
+
+		case str2int("console"):
+		case str2int("c"):
+			console();
+			break;
+
 		default:
 			usage();
 			break;
@@ -73,7 +112,7 @@ void HmBle::factoryReset() {
 	send("AT");                 // Check status
 }
 
-void HmBle::configureBeacon() {
+void HmBle::configureBeacon(char* args) {
 	factoryReset();
 	send("AT+MARJ0x0A00");      // iBeacon Major number
 	send("AT+MINO0x00A0");      // iBeacon Minor number
@@ -94,14 +133,14 @@ void HmBle::configureBeacon() {
 
 void HmBle::configureSlave() {
 	factoryReset();
-	send("AT+CONF0C77F9484EF"); // Connect
-	send("AT+ROLE1");           // Set role
+	send("AT+ROLE0");           // Set role to peripheral
+	send("AT+ADDR?");           // Show addr
 }
 
-void HmBle::configureMaster() {
+void HmBle::configureMaster(char* args) {
 	factoryReset();
-	send("AT+CONF0C77F94808A"); // Connect
-	send("AT+ROLE0");           // Set role
+	send("AT+ROLE1");           // Set role to central
+	sendf("AT+CON%s", args);    // Set device to connect to
 }
 
 void HmBle::console() {
