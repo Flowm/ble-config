@@ -4,7 +4,6 @@
 #define SerialBle Serial1
 
 HmBle ble(&SerialCmd, &SerialBle);
-char inChar;
 
 void setup() {
   SerialCmd.begin(9600);
