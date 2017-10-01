@@ -126,8 +126,12 @@ void HmBle::info() {
 	send("AT");
 	send("AT+VERR?");
 	send("AT+ADDR?");
+	send("AT+NAME?");
 	send("AT+MODE?");
+	send("AT+ROLE?");
+	send("AT+IBEA?");
 	send("AT+BAUD?");
+	send("AT+RADD?");
 }
 
 void HmBle::wakeup() {
