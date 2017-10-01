@@ -34,7 +34,7 @@ void HmBle::usage() {
 			"wakeup         Wakup device from sleep mode\r\n"
 			"reboot         Reboot\r\n"
 			"factory        Perform factory reset\r\n"
-			"beacon         Configure as beacon\r\n"
+			"beacon [name]  Configure as beacon\r\n"
 			"slave          Configure as peripheral device\r\n"
 			"master [addr]  Configure as central device and connect to addr\r\n"
 			"console        Serial console\r\n"
@@ -149,18 +149,21 @@ void HmBle::factoryReset() {
 void HmBle::configureBeacon(char* args) {
 	send("AT+MARJ0x0A00");      // iBeacon Major number
 	send("AT+MINO0x00A0");      // iBeacon Minor number
-	send("AT+NAMEFMHOME");      // Set Name
+	sendf("AT+NAME%s", args);   // Set Name
+
 	send("AT+ADVI5");           // Advertising interval
 	send("AT+ADTY0");           // Advertising type connectable
 	send("AT+IBEA1");           // Enable iBeacon mode
 	send("AT+DELO2");           // Broadcast-only
 	send("AT+RESET");           // Reboot
+
 	/* UUID
 	send("AT+IBE074278BDA");    // Set Beacon UUID1
 	send("AT+IBE1B6444520");    // Set Beacon UUID2
 	send("AT+IBE28F0C720E");    // Set Beacon UUID3
 	send("AT+IBE3AF059935");    // Set Beacon UUID4
 	*/
+
 	/* Low power
 	send("AT+ADVI5");           // Advertising interval
 	send("AT+ADTY3");           // Disable connection
