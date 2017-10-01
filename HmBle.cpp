@@ -35,6 +35,7 @@ void HmBle::usage() {
 			"reboot         Reboot\r\n"
 			"factory        Perform factory reset\r\n"
 			"beacon [name]  Configure as beacon\r\n"
+			"beaconl [name] Configure as beacon with powersaving\r\n"
 			"slave          Configure as peripheral device\r\n"
 			"master [addr]  Configure as central device and connect to addr\r\n"
 			"console        Serial console\r\n"
@@ -85,6 +86,14 @@ void HmBle::handleInput() {
 		case str2int("b"):
 			if ((args = strtok(NULL, "")))
 				configureBeacon(args);
+			break;
+
+		case str2int("beaconl"):
+		case str2int("bl"):
+			if ((args = strtok(NULL, ""))) {
+				configureBeacon(args);
+				configureBeaconPowersave();
+			}
 			break;
 
 		case str2int("slave"):
@@ -163,12 +172,12 @@ void HmBle::configureBeacon(char* args) {
 	send("AT+IBE28F0C720E");    // Set Beacon UUID3
 	send("AT+IBE3AF059935");    // Set Beacon UUID4
 	*/
+}
 
-	/* Low power
+void HmBle::configureBeaconPowersave() {
 	send("AT+ADVI5");           // Advertising interval
 	send("AT+ADTY3");           // Disable connection
 	send("AT+PWRM0");           // Enable auto-sleep
-	*/
 }
 
 void HmBle::configureSlave() {

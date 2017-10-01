@@ -18,6 +18,7 @@ class HmBle {
 		void wakeup();
 		void factoryReset();
 		void configureBeacon(char* args);
+		void configureBeaconPowersave();
 		void configureSlave();
 		void configureMaster(char* args);
 
