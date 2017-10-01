@@ -31,6 +31,7 @@ void HmBle::usage() {
 	cmdSerial->print(
 			"Commands:\r\n"
 			"info           Show info\r\n"
+			"wakeup         Wakup device from sleep mode\r\n"
 			"reboot         Reboot\r\n"
 			"factory        Perform factory reset\r\n"
 			"beacon         Configure as beacon\r\n"
@@ -62,11 +63,12 @@ void HmBle::handleInput() {
 	switch (str2int(cmd)) {
 		case str2int("info"):
 		case str2int("i"):
-			send("AT");
-			send("AT+VERR?");
-			send("AT+ADDR?");
-			send("AT+MODE?");
-			send("AT+BAUD?");
+			info();
+			break;
+
+		case str2int("wakeup"):
+		case str2int("w"):
+			wakeup();
 			break;
 
 		case str2int("reboot"):
@@ -118,6 +120,19 @@ void HmBle::handleInput() {
 
 	// Print promt
 	promt();
+}
+
+void HmBle::info() {
+	send("AT");
+	send("AT+VERR?");
+	send("AT+ADDR?");
+	send("AT+MODE?");
+	send("AT+BAUD?");
+}
+
+void HmBle::wakeup() {
+	// Send a long string (length > 80 or more) to wakeup the device
+	send("I am iron man, I am iron man, I am iron man, I am iron man, I am iron man, I am iron man...");
 }
 
 void HmBle::factoryReset() {

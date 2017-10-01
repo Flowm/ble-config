@@ -14,6 +14,8 @@ class HmBle {
 		void usage();
 		void handleInput();
 
+		void info();
+		void wakeup();
 		void factoryReset();
 		void configureBeacon(char* args);
 		void configureSlave();
