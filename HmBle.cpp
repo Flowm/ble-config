@@ -147,32 +147,33 @@ void HmBle::factoryReset() {
 }
 
 void HmBle::configureBeacon(char* args) {
-	factoryReset();
 	send("AT+MARJ0x0A00");      // iBeacon Major number
 	send("AT+MINO0x00A0");      // iBeacon Minor number
-	send("AT+ADVI5");           // Advertising interval
 	send("AT+NAMEFMHOME");      // Set Name
-	send("AT+ADTY3");           // Disable connection
+	send("AT+ADVI5");           // Advertising interval
+	send("AT+ADTY0");           // Advertising type connectable
 	send("AT+IBEA1");           // Enable iBeacon mode
 	send("AT+DELO2");           // Broadcast-only
-	send("AT+PWRM0");           // Enable auto-sleep
 	send("AT+RESET");           // Reboot
-	/*
+	/* UUID
 	send("AT+IBE074278BDA");    // Set Beacon UUID1
 	send("AT+IBE1B6444520");    // Set Beacon UUID2
 	send("AT+IBE28F0C720E");    // Set Beacon UUID3
 	send("AT+IBE3AF059935");    // Set Beacon UUID4
 	*/
+	/* Low power
+	send("AT+ADVI5");           // Advertising interval
+	send("AT+ADTY3");           // Disable connection
+	send("AT+PWRM0");           // Enable auto-sleep
+	*/
 }
 
 void HmBle::configureSlave() {
-	factoryReset();
 	send("AT+ROLE0");           // Set role to peripheral
 	send("AT+ADDR?");           // Show addr
 }
 
 void HmBle::configureMaster(char* args) {
-	factoryReset();
 	send("AT+ROLE1");           // Set role to central
 	sendf("AT+CON%s", args);    // Set device to connect to
 }
